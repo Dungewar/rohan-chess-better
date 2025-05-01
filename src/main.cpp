@@ -7,13 +7,13 @@
 int stonkfish_depth = 3;
 
 int main() {
-
+    std::cout << "Starting..." << std::endl;
     sf::RenderWindow window (
         sf::VideoMode(sf::Vector2u {square_size * 8 + 2*board_shift.x, square_size * 8 + 2*board_shift.y}),
-        "Segmentation fault (core dumped) (real) (fr) (on god) (no cap) (trustmebro.click)" // nothing to see here
+        "BSB Sim 5000" // nothing to see here
     );
     window.setSize(sf::Vector2u {1024, 1024});
-    window.setFramerateLimit(30);
+    window.setVerticalSyncEnabled(true);
     
     game::init();
     
@@ -85,6 +85,11 @@ int main() {
 
         window.clear();
         game::tick(window);
+
+        // sf::RectangleShape rect(sf::Vector2f(window.getSize().x, window.getSize().y));
+        // rect.setFillColor(sf::Color(255, 255, 255, 255));
+        // window.draw(rect);
+
         window.display();
     }
 }

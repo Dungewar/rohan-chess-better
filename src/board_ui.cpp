@@ -104,7 +104,7 @@ namespace game {
 
     void mousePressed(sf::Vector2f mousePos) {
         if (selected_piece) {
-            // simulate drag to mousePos
+            // simulates drag to mousePos, this is if you first click on a piece then click where to put it
             if (selected_piece->toggled) {
                 mouseReleased(mousePos);
                 return;
@@ -117,7 +117,7 @@ namespace game {
                 if (p == nullptr) continue;
                 if (p->containsPoint(mousePos)) {
                     // skip if not your turn
-                    if (numMoves % 2 == isupper(p->type) && !freedom) break;
+                    if (numMoves % 2 == p->white && !freedom) break;
 
                     // get legal moves
                     legalMoves.clear();

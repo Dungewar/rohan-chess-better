@@ -3,7 +3,8 @@
 #include <unordered_map>
 
 constexpr bool goofyEnPassant = false;
-constexpr bool freedom = true;
+// Whether turn order can be skipped
+constexpr bool freedom = false;
 extern int stonkfish_depth; // defined in main.cpp
 constexpr int max_stonkfish_calls = 5000000;
 constexpr float stonkfish_randomization = 0.f; // 0.0005f;

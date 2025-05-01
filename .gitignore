@@ -1,1 +1,4 @@
 build
+linux
+cmake-build-debug
+#lib # <- as long as we all use x64 windows it's fine

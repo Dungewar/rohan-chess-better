@@ -23,17 +23,17 @@ void Square::init () {
 
 void Piece::init () {
     // set up filename
-    std::string filename = project_dir + "/assets/pieces/";
-    char lower = tolower(type);
-    if (lower == type)
-        filename += "b";
-    else
-        filename += "w";
-
-    filename += tolower(lower);
-    filename += ".png";
+    // std::string filename = project_dir + "/assets/pieces/";
+    // char lower = tolower(type);
+    // if (white)
+    //     filename += "w";
+    // else
+    //     filename += "b";
+    //
+    // filename += tolower(lower);
+    // filename += ".png";
     
-    texture = sf::Texture {filename};
+    texture = sf::Texture {getTexture(*this)};
     // // load textures
     // if (!texture.loadFromFile(filename)) {
     //     std::cout << "texture not loaded. it's joever" << std::endl;
