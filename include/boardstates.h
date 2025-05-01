@@ -5,7 +5,11 @@
 #include <stack>
 #include <bitset>
 
-class Bd {
+/**
+ * Represents the state of a chessboard and provides methods for move generation,
+ * board state manipulation, and evaluation.
+ */
+class bd {
     public:
     struct Move {
         sf::Vector2i start {};
@@ -15,7 +19,7 @@ class Bd {
         bool isEnPassant {};
         bool isPromotion {};
         std::bitset<6> castle_state;
-        inline bool operator== (const Bd::Move& other) const {
+        inline bool operator== (const bd::Move& other) const {
             return start == other.start
              && end == other.end;
         }
@@ -38,7 +42,7 @@ class Bd {
     sf::Vector2i ep_pawn {-1, -1};
 
     // constructors
-    Bd (const std::string& fen) {
+    bd (const std::string& fen) {
         loadFromFen(fen);
     };
     /*Bd (const Bd& copy) {
@@ -94,5 +98,5 @@ class Bd {
 
     void stonkfish ();
 
-    inline bool operator== (const Bd& other) const { return board == other.board; }
+    inline bool operator== (const bd& other) const { return board == other.board; }
 };

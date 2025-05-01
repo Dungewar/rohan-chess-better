@@ -5,74 +5,142 @@
 #include <stdio.h>
 #include <chrono>
 
-void Bd::loadFromFen (const std::string& fen) {
-    int x = 0;
-    int y = 0;
-    for (int i = 0; i < fen.size(); i++) {
-        char c = fen[i];
+// void bd::loadFromFen (const std::string& fen) {
+//     
+//     int x = 0;
+//     int y = 0;
+//     for (int i = 0; i < fen.size(); i++) {
+//         char c = fen[i];
+//
+//         if (isalpha(c)) {
+//             board[x][y] = c;
+//         }
+//         if (isdigit(c)) {
+//             int temp = x;
+//             x += (c - '0');
+//             for (int i = temp; i < x; i++) {
+//                 board[i][y] = ' ';
+//             }
+//         }
+//         else x++;
+//
+//         if (c == '/') {
+//             x = 0;
+//             y++;
+//             if (y > 7) break;
+//         }
+//         if (c == ' ') {
+//             isWhiteTurn = (fen[i+1] == 'w');
+//             i += 3;
+//             // initial state: no one can castle
+//             castle_state.reset();
+//             while (fen[i] != ' ') {
+//                 switch (fen[i]) {
+//                     case 'K':
+//                         castle_state[2] = true;
+//                         castle_state[0] = true;
+//                         break;
+//                     case 'k':
+//                         castle_state[5] = true;
+//                         castle_state[3] = true;
+//                         break;
+//                     case 'Q':
+//                         castle_state[1] = true;
+//                         castle_state[0] = true;
+//                         break;
+//                     case 'q':
+//                         castle_state[4] = true;
+//                         castle_state[3] = true;
+//                         break;
+//                 }
+//                 i++;
+//             }
+//             return;
+//         }
+//     }
+//     // todo
+// }
 
-        if (isalpha(c)) {
-            board[x][y] = c;
-        }
-        if (isdigit(c)) {
-            int temp = x;
-            x += (c - '0');
-            for (int i = temp; i < x; i++) {
-                board[i][y] = ' ';
+void bd::loadFromFen(const std::string &fen) {
+        int x = 0;
+        int y = 0;
+
+        // Clear the board before loading
+        for (int i = 0; i < 8; ++i) {
+            for (int j = 0; j < 8; ++j) {
+                board[i][j] = nullptr;
             }
         }
-        else x++;
 
-        if (c == '/') {
-            x = 0;
-            y++;
-            if (y > 7) break;
-        }
-        if (c == ' ') {
-            isWhiteTurn = (fen[i+1] == 'w');
-            i += 3;
-            // initial state: no one can castle
-            castle_state.reset();
-            while (fen[i] != ' ') {
-                switch (fen[i]) {
-                    case 'K':
-                        castle_state[2] = true;
-                        castle_state[0] = true;
-                        break;
-                    case 'k':
-                        castle_state[5] = true;
-                        castle_state[3] = true;
-                        break;
-                    case 'Q':
-                        castle_state[1] = true;
-                        castle_state[0] = true;
-                        break;
-                    case 'q':
-                        castle_state[4] = true;
-                        castle_state[3] = true;
-                        break;
+        // Parse the FEN string
+        for (int i = 0; i < fen.size(); i++) {
+            char c = fen[i];
+
+            if (isalpha(c)) {
+                // Handle piece characters
+                // Create a new piece based on the character
+                bool isWhite = isupper(c); // Capital letters represent white pieces
+                char pieceType = tolower(c);
+
+                Piece *newPiece = new Piece(static_cast<Type>(pieceType), sf::Vector2i{x, y}, isWhite);
+
+                board[x][y] = newPiece;
+                x++;
+            } else if (isdigit(c)) {
+                // Handle empty squares
+                int emptyCount = c - '0';
+                for (int dx = 0; dx < emptyCount; dx++) {
+                    board[x][y] = nullptr;
+                    x++;
                 }
-                i++;
+            } else if (c == '/') {
+                // Handle row delimiter
+                x = 0;
+                y++;
+            } else if (c == ' ') {
+                // Handle metadata part of FEN
+                isWhiteTurn = (fen[i + 1] == 'w');
+                i += 3;
+                castle_state.reset();
+
+                while (fen[i] != ' ') {
+                    // Parse castling rights
+                    switch (fen[i]) {
+                        case 'K': castle_state[2] = true;
+                            castle_state[0] = true;
+                            break;
+                        case 'Q': castle_state[1] = true;
+                            castle_state[0] = true;
+                            break;
+                        case 'k': castle_state[5] = true;
+                            castle_state[3] = true;
+                            break;
+                        case 'q': castle_state[4] = true;
+                            castle_state[3] = true;
+                            break;
+                    }
+                    i++;
+                }
+                return;
             }
-            return;
         }
+        // todo: Handle any final steps if required
     }
-    // todo
-}
-std::string Bd::getFen () {
+
+std::string bd::getFen() {
     std::string output = "";
     for (int y = 0; y < 8; y++) {
         int numSpaces = 0;
         for (int x = 0; x < 8; x++) {
-            char type = board[x][y];
-            
-            if (type == ' ') numSpaces++;
+            Piece *piece = board[x][y];
+
+            if (piece == nullptr) numSpaces++;
             else {
                 if (numSpaces > 0) {
                     output += std::to_string(numSpaces);
                     numSpaces = 0;
                 }
-                output += type;
+                output += piece->getFenChar();
             }
         }
         if (numSpaces > 0) output += std::to_string(numSpaces);
@@ -89,7 +157,7 @@ std::string Bd::getFen () {
     return output;
 }
 
-void Bd::print () {
+void bd::print () {
     for (int y = 0; y < 8; y++) {
         for (int x = 0; x < 8; x++) {
             std::cout << board[x][y] << " ";
@@ -99,20 +167,22 @@ void Bd::print () {
     std::cout << getFen() << "\n" << castle_state << "\n";
 }
 
-void Bd::getMoves (const sf::Vector2i& startPos, std::vector<Move>& out) const {
+void bd::getMoves (const sf::Vector2i& startPos, std::vector<Move>& out) const {
 
-    char type = board[startPos.x][startPos.y];
+    Piece* piece = board[startPos.x][startPos.y];
 
-    if (type == ' ') {
+    if (piece == nullptr) {
         std::cout << "not a piece - Bd::getMoves()" << std::endl;
         return;
     }
 
+    Type pieceType = piece->type;
+
     std::vector <sf::Vector2i> relative_moves;
 
-    char lowerType = tolower(type);
+    
     // knight
-    if (lowerType == 'n') {
+    if (pieceType == Type::Knight) {
         relative_moves = {
             sf::Vector2i {-1,  2},
             sf::Vector2i { 1,  2},
@@ -125,7 +195,7 @@ void Bd::getMoves (const sf::Vector2i& startPos, std::vector<Move>& out) const {
         };
     }
     // king
-    if (lowerType == 'k') {
+    if (pieceType == Type::King) {
         relative_moves = {
             sf::Vector2i { 1,  0},
             sf::Vector2i { 1,  1},
@@ -138,7 +208,7 @@ void Bd::getMoves (const sf::Vector2i& startPos, std::vector<Move>& out) const {
         };
     }
     // castles
-    if (lowerType == 'k' && startPos.x == 4) {
+    if (pieceType == Type::King && startPos.x == 4) {
         if (board[startPos.x+1][startPos.y] == ' ' && board[startPos.x+2][startPos.y] == ' ' && tolower(board[startPos.x+3][startPos.y]) == 'r') {
             if (castle_state[5] && castle_state[3] && islower(type) || castle_state[2] && castle_state[0] && isupper(type))
                 relative_moves.push_back(sf::Vector2i {2, 0});
@@ -255,7 +325,7 @@ void Bd::getMoves (const sf::Vector2i& startPos, std::vector<Move>& out) const {
     }
 }
 
-void Bd::getAllMoves (std::vector<Move>& out) const {
+void bd::getAllMoves (std::vector<Move>& out) const {
     for (int y = 0; y < 8; y++) {
         for (int x = 0; x < 8; x++) {
             char c = board[x][y];
@@ -266,7 +336,7 @@ void Bd::getAllMoves (std::vector<Move>& out) const {
     }
 }
 
-void Bd::makeMove (const Move& m) {
+void bd::makeMove (const Move& m) {
     const sf::Vector2i& start = m.start;
     const sf::Vector2i& end = m.end;
 
@@ -339,7 +409,7 @@ void Bd::makeMove (const Move& m) {
     
     isWhiteTurn = !isWhiteTurn;
 }
-void Bd::undoMove (const Move& m) {
+void bd::undoMove (const Move& m) {
     if (m.start.x == 0 && m.start.y == 0 && m.end.x == 0 && m.end.y == 0) {
         std::cout << "null move, bd::undoMove" << std::endl;
         return;
@@ -386,7 +456,7 @@ const std::unordered_map<char, float> piece_values = {
     {'k', 100}
 };
 
-float Bd::static_eval () const {
+float bd::static_eval () const {
     float eval = 0;
     for (int y = 0; y < 8; y++) {
         for (int x = 0; x < 8; x++) {
@@ -427,7 +497,7 @@ std::string getCoord(sf::Vector2i p) {
 
 int numCalls = 0;
 int numPruned = 0;
-Bd::MoveData Bd::minimax (int depth, float alpha, float beta, std::vector<Move> moves, bool isFirstCall) {
+bd::MoveData bd::minimax (int depth, float alpha, float beta, std::vector<Move> moves, bool isFirstCall) {
     numCalls++;
 
     if (depth <= 0) return MoveData {static_eval()};
@@ -488,13 +558,13 @@ Bd::MoveData Bd::minimax (int depth, float alpha, float beta, std::vector<Move> 
     return out;
 }
 
-void Bd::minimax2 (int depth) {
+void bd::minimax2 (int depth) {
     std::vector<Move> moves = {};
     getAllMoves(moves);
 
 }
 
-void Bd::stonkfish () {
+void bd::stonkfish () {
     numCalls = 0;
     numPruned = 0;
     // timer start

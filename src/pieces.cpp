@@ -39,10 +39,10 @@ void Piece::init () {
     //     std::cout << "texture not loaded. it's joever" << std::endl;
     //     return;
     // }
-    //texture.create(1024, 1024);
+    // texture.create(1024, 1024);
     
     texture.setSmooth(true);
-    //sprite.setTexture(texture);
+    // sprite.setTexture(texture);
     
     // configure sprite
     sprite = sf::Sprite {texture};

@@ -2,12 +2,12 @@
 #include <SFML/Graphics.hpp>
 #include <boardstates.h>
 
-class Bd;
+class bd;
 
 namespace game {
     void init ();
     void tick (sf::RenderWindow&);
-    void setPieceBoard (const Bd&);
+    void setPieceBoard (const bd&);
     
     // user events
 

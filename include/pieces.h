@@ -36,18 +36,29 @@ private:
             // Load each texture only once
             if (!piece_textures[{Type::Pawn, true}].loadFromFile("assets/pieces/wp"))
                 std::cout << "texture not loaded. it's joever" << std::endl;
-            piece_textures[{Type::Rook, true}].loadFromFile("assets/pieces/wr");
-            piece_textures[{Type::Knight, true}].loadFromFile("assets/pieces/wn");
-            piece_textures[{Type::Bishop, true}].loadFromFile("assets/pieces/wb");
-            piece_textures[{Type::Queen, true}].loadFromFile("assets/pieces/wq");
-            piece_textures[{Type::King, true}].loadFromFile("assets/pieces/wk");
+            if (!piece_textures[{Type::Rook, true}].loadFromFile("assets/pieces/wr"))
+                std::cerr << "Failed to load texture: assets/pieces/wr" << std::endl;
+            if (!piece_textures[{Type::Knight, true}].loadFromFile("assets/pieces/wn"))
+                std::cerr << "Failed to load texture: assets/pieces/wn" << std::endl;
+            if (!piece_textures[{Type::Bishop, true}].loadFromFile("assets/pieces/wb"))
+                std::cerr << "Failed to load texture: assets/pieces/wb" << std::endl;
+            if (!piece_textures[{Type::Queen, true}].loadFromFile("assets/pieces/wq"))
+                std::cerr << "Failed to load texture: assets/pieces/wq" << std::endl;
+            if (!piece_textures[{Type::King, true}].loadFromFile("assets/pieces/wk"))
+                std::cerr << "Failed to load texture: assets/pieces/wk" << std::endl;
 
-            piece_textures[{Type::Pawn, false}].loadFromFile("assets/pieces/bp");
-            piece_textures[{Type::Rook, false}].loadFromFile("assets/pieces/br");
-            piece_textures[{Type::Knight, false}].loadFromFile("assets/pieces/bn");
-            piece_textures[{Type::Bishop, false}].loadFromFile("assets/pieces/bb");
-            piece_textures[{Type::Queen, false}].loadFromFile("assets/pieces/bq");
-            piece_textures[{Type::King, false}].loadFromFile("assets/pieces/bk");
+            if (!piece_textures[{Type::Pawn, false}].loadFromFile("assets/pieces/bp"))
+                std::cerr << "Failed to load texture: assets/pieces/bp" << std::endl;
+            if (!piece_textures[{Type::Rook, false}].loadFromFile("assets/pieces/br"))
+                std::cerr << "Failed to load texture: assets/pieces/br" << std::endl;
+            if (!piece_textures[{Type::Knight, false}].loadFromFile("assets/pieces/bn"))
+                std::cerr << "Failed to load texture: assets/pieces/bn" << std::endl;
+            if (!piece_textures[{Type::Bishop, false}].loadFromFile("assets/pieces/bb"))
+                std::cerr << "Failed to load texture: assets/pieces/bb" << std::endl;
+            if (!piece_textures[{Type::Queen, false}].loadFromFile("assets/pieces/bq"))
+                std::cerr << "Failed to load texture: assets/pieces/bq" << std::endl;
+            if (!piece_textures[{Type::King, false}].loadFromFile("assets/pieces/bk"))
+                std::cerr << "Failed to load texture: assets/pieces/bk" << std::endl;
 
             texturesLoaded = true;
         }

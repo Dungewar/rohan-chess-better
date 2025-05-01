@@ -13,14 +13,14 @@ namespace game {
     std::vector<Square> squares;
     std::vector<sf::Text> coords;
     // pieces
-    Bd current_board {starting_fen};
+    bd current_board {starting_fen};
     std::vector<std::vector<Piece*>> piece_board {8, std::vector<Piece*>(8, {nullptr})};
     Piece* selected_piece = nullptr;
     
-    std::vector<Bd::Move> legalMoves {};
+    std::vector<bd::Move> legalMoves {};
     std::vector<sf::CircleShape> legalMoveCircles {};
 
-    std::vector<Bd::Move> move_history;
+    std::vector<bd::Move> move_history;
 
     void init () {
         if (!font.openFromFile(project_dir + "/assets/fonts/roboto-mono.ttf")) {
@@ -76,27 +76,27 @@ namespace game {
             window.draw(circle);
         }
     }
-    void setPieceBoard (const Bd& bs) {
+    void setPieceBoard (const bd& bs) {
         for (int x = 0; x < 8; x++) {
             for (int y = 0; y < 8; y++) {
-                const char c = bs.board[x][y];
+                const Piece* c = bs.board[x][y];
 
                 // skip if pieces already match
-                if (piece_board[x][y] && piece_board[x][y]->type == c)
+                if (piece_board[x][y] && piece_board[x][y]->type == c->type)
                     continue;
                 
                 // skip both are blank
-                if (!piece_board[x][y] && c == ' ')
+                if (!piece_board[x][y] && c == nullptr)
                     continue;
 
                 // replace piece with c
                 delete piece_board[x][y];
-                if (c == ' ') {
+                if (c == nullptr) {
                     // or make it blank
                     piece_board[x][y] = nullptr;
                 }
                 else {
-                    piece_board[x][y] = new Piece {c, sf::Vector2i{x, y}};
+                    piece_board[x][y] = new Piece {*c};
                 }
             }
         }
@@ -128,7 +128,7 @@ namespace game {
                     selected_piece = p;
 
                     // add all legal moves to legalMoveCircles
-                    for (Bd::Move& move : legalMoves) {
+                    for (bd::Move& move : legalMoves) {
 
                         sf::CircleShape circle {square_size * circle_scale};
                         circle.setFillColor(sf::Color{0, 80, 0, 150});
@@ -152,7 +152,7 @@ namespace game {
         legalMoveCircles.clear();
     }
     
-    void pushMove(const Bd::Move& move) {
+    void pushMove(const bd::Move& move) {
         // if there is more history and it clashes
         if (move_history.size() > numMoves) {
             if (!(move == move_history[numMoves])) {
@@ -181,7 +181,7 @@ namespace game {
             // find square that piece is being dropped on
             if (sq.rect.getGlobalBounds().contains(sf::Vector2f {mousePos.x, mousePos.y})) {
                 // if legalMoves contains sq.boardPos
-                auto it = std::find(legalMoves.begin(), legalMoves.end(), Bd::Move {selected_piece->boardPos, sq.boardPos});
+                auto it = std::find(legalMoves.begin(), legalMoves.end(), bd::Move {selected_piece->boardPos, sq.boardPos});
                 if (it != legalMoves.end()) {
                     pushMove(*it);
                 }
@@ -208,7 +208,7 @@ namespace game {
     }
     void stonkfishMove () {
         unselect();
-        Bd::MoveData bestMove = current_board.minimax(stonkfish_depth, -1000, 1000);
+        bd::MoveData bestMove = current_board.minimax(stonkfish_depth, -1000, 1000);
         pushMove(bestMove.moveStack.top());
     }
 
